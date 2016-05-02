@@ -1,0 +1,51 @@
+package duplicate;
+import java.io.File;
+public class Parallel{
+	File file;
+	String name;String title;
+	int size;
+	long start,end;
+public Parallel(File file,String name,String title,int size){
+	this.file = file;
+	this.name = name;
+	this.title = title;
+	this.size = size;
+	
+}
+public void startRunning(){
+	TaskID id = runPSNM() notify(finishedBuilding());
+}
+TASK public void runPSNM(){
+	TaskID psnm = psnm();
+	//TaskID searchcomplete = searchComplete() dependsOn(search);
+	TaskID view = showDuplicate() dependsOn(psnm);
+	//TaskID updategui = updateGUI() dependsOn(blurimage);
+	try {
+		view.waitTillFinished();
+		//System.out.println(file.length+" "+iconlist.size()+" "+blurlist.size()+" size");
+	}catch(Exception e){
+		e.printStackTrace();
+	}
+}
+TASK public void psnm(){
+	start = System.currentTimeMillis();
+	if(name.equals("dblp.xml")){
+		PSNM.psnmDBLP(file,title,size);
+	}
+	if(name.equals("cd.csv")){
+		PSNM.psnmCD(file,title,size);
+	}
+	end = System.currentTimeMillis();
+}
+TASK public void showDuplicate(){
+	ArrayList<String> dup = new ArrayList<String>(PSNM.duplicates);
+	ViewDuplicate vd = new ViewDuplicate("PSNM");
+	vd.setVisible(true);
+	vd.setSize(600,400);
+	vd.viewDup(dup);
+}
+private void finishedBuilding() {
+	System.out.println("over");
+	System.out.println("Parallel "+(end-start));
+}
+}
